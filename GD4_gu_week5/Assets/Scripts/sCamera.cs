@@ -10,6 +10,7 @@ public class sCamera : MonoBehaviour
     [SerializeField] Transform gCameraTransform;
     [SerializeField] float vCamLowLim = 30;
     [SerializeField] float vCamUpLim = 50;
+    [SerializeField] float vKeyboardTurnSense =.1f;
 
 
 
@@ -27,7 +28,7 @@ public class sCamera : MonoBehaviour
     void Update()
     {
         float vMouseUpTmp = Input.GetAxis("MouseX");
-        float vKeySideTmp = Input.GetAxis("Horizontal");
+        float vKeySideTmp = Input.GetAxis("Horizontal")*vKeyboardTurnSense;
 
         vMouseUpTmp = vMouseUpTmp +vKeySideTmp;
 
@@ -44,7 +45,7 @@ public class sCamera : MonoBehaviour
 
 
 
-
+/*
         float vMouseSideTmp = Input.GetAxis("MouseY");
 
         if (fYMouseInvert) 
@@ -79,7 +80,7 @@ public class sCamera : MonoBehaviour
 
         }
              */
-        gCameraTransform.LookAt(transform.position);
+       // gCameraTransform.LookAt(transform.position);
    
     }
 }

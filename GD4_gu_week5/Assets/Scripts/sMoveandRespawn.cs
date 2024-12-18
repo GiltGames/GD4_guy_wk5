@@ -6,11 +6,13 @@ public class sMoveandRespawn : MonoBehaviour
     [SerializeField] float vOOBLow = -20;
     [SerializeField] float vOOBUp = 0.2f;
     [SerializeField] Rigidbody rb;
+    [SerializeField] GameObject explode;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         vStartPos = transform.position;
+       
 
     }
 
@@ -42,6 +44,9 @@ public class sMoveandRespawn : MonoBehaviour
     public void pRespawn()
     {
         //restore start position
+
+        GameObject explodeS = Instantiate(explode, transform.position, Quaternion.identity);
+        Destroy(explodeS,1f);
 
         transform.position = vStartPos;
 

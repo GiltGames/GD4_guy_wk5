@@ -8,6 +8,9 @@ TagManager:
   - Shot
   - Enemy
   - Wall
+  - PowerUp
+  - MassUp
+  - ShotUp
   layers:
   - Default
   - TransparentFX

@@ -7,6 +7,8 @@ public class sGravity : MonoBehaviour
     [SerializeField] Vector3 vDirection;
     [SerializeField] float vDistance;
     [SerializeField] Transform[] vOther;
+    [SerializeField] sPlayer sPlayer;
+    
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -18,29 +20,30 @@ public class sGravity : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        foreach (Transform t in vOther)
+        if (sPlayer.fGameStart)
         {
-
-            vDirection = (transform.position - t.position).normalized;
-            vDistance = (transform.position - t.position).magnitude;
-
-            Rigidbody rb = t.GetComponent<Rigidbody>();
-
-            if (rb != null)
-
+            foreach (Transform t in vOther)
             {
-                rb.AddForce(vDirection*vGravity/(vDistance*vDistance));
 
+                vDirection = (transform.position - t.position).normalized;
+                vDistance = (transform.position - t.position).magnitude;
+
+                Rigidbody rb = t.GetComponent<Rigidbody>();
+
+                if (rb != null)
+
+                {
+                    rb.AddForce(vDirection * vGravity / (vDistance * vDistance));
+
+
+
+
+                }
 
 
 
             }
-
-
-
         }
-
 
     }
 }
