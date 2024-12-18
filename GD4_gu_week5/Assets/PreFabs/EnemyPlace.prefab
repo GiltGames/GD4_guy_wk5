@@ -160,11 +160,11 @@ MonoBehaviour:
   Aura: {fileID: 2048555432561730528}
   EnemyBody: {fileID: 6843920546975487693}
   vAttackInterval: 4
-  vAttackTimeRandomness: 0
-  vHitDelay: 6
+  vAttackTimeRandomness: 1
+  vHitDelay: 7
   Player: {fileID: 0}
   vTimer: 4
-  vAttackForce: 50
+  vAttackForce: 25
   vDirection: {x: 0, y: 0, z: 0}
   Renderer: {fileID: 0}
   vTimeBlue: 4
@@ -176,6 +176,7 @@ MonoBehaviour:
   vHighMass: 7
   tScore: {fileID: 0}
   explode: {fileID: 5482012988335050231, guid: bcb727a466244ef47840f684f7b79452, type: 3}
+  sPlayer: {fileID: 0}
 --- !u!54 &7561444643673380814
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -210,7 +211,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2840480614468608509}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: e00407e8f8e57d34ca315891fdc55c10, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

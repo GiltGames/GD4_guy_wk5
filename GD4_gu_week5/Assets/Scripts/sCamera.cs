@@ -7,10 +7,12 @@ public class sCamera : MonoBehaviour
     [SerializeField] bool fXMouseInvert;
     [SerializeField] bool fYMouseInvert;
     [SerializeField] Transform gPlayer;
+   
     [SerializeField] Transform gCameraTransform;
     [SerializeField] float vCamLowLim = 30;
     [SerializeField] float vCamUpLim = 50;
     [SerializeField] float vKeyboardTurnSense =.1f;
+    [SerializeField] sPlayer sPlayer;
 
 
 
@@ -20,6 +22,7 @@ public class sCamera : MonoBehaviour
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        transform.LookAt(Vector3.zero);
 
 
     }
@@ -27,23 +30,26 @@ public class sCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float vMouseUpTmp = Input.GetAxis("MouseX");
-        float vKeySideTmp = Input.GetAxis("Horizontal")*vKeyboardTurnSense;
+        if (sPlayer.fGameStart)
 
-        vMouseUpTmp = vMouseUpTmp +vKeySideTmp;
 
-        
+        {
+            float vMouseUpTmp = Input.GetAxis("MouseX");
+            float vKeySideTmp = Input.GetAxis("Horizontal") * vKeyboardTurnSense;
+               // vMouseUpTmp = vMouseUpTmp +vKeySideTmp;
+
+
         if (fXMouseInvert)
         {
             vMouseUpTmp = vMouseUpTmp * -1;
 
         }
 
-        transform.Rotate(Vector3.up * vMouseSpeed *Time.deltaTime* vMouseUpTmp);
+        transform.Rotate(Vector3.up * vMouseSpeed * Time.deltaTime * vMouseUpTmp);
 
         transform.position = gPlayer.position;
 
-
+    }
 
 /*
         float vMouseSideTmp = Input.GetAxis("MouseY");

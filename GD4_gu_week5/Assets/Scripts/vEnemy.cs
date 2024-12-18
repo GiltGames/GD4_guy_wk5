@@ -144,4 +144,26 @@ public class vEnemy : MonoBehaviour
 
     }
 
+    private void OnCollision(Collision collision)
+    {
+       
+
+        if (collision.gameObject.tag == "Trap" && vTimer > vTimeBlue)
+        {
+
+
+            sPlayer.vScore = sPlayer.vScore + 1;
+            tScore.text = "Score: " + sPlayer.vScore;
+
+            GameObject explodeS = Instantiate(explode, transform.position, Quaternion.identity);
+            Destroy(explodeS, 1f);
+
+            Destroy(gameObject);
+
+        }
+
+
+    }
+
+
 }

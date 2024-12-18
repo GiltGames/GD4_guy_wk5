@@ -18,6 +18,21 @@ public class sPlayer : MonoBehaviour
     [SerializeField] float vMassSize;
     [SerializeField] Vector3 vOriginalSize;
 
+    //ShotUp variables
+    [SerializeField] float vShotUpMult = 10;
+    [SerializeField] bool fShotUp;
+    [SerializeField] float vShotUpTimer;
+    [SerializeField] float vShotUpInterval;
+    [SerializeField] GameObject Aura2;
+
+    //RepelUp variables
+    [SerializeField] GameObject Aura3;
+    [SerializeField] float vRepelUpTimer;
+    [SerializeField] float vRepelUpInterval;
+    [SerializeField] sRepel sRepel;
+    [SerializeField] float vRepelGravity=-50f;
+
+
     Rigidbody rb;
     [SerializeField] int vLives;
     public int vScore;
@@ -53,7 +68,7 @@ public class sPlayer : MonoBehaviour
 
         transform.rotation = Quaternion.identity;
         vOriginalSize = transform.localScale;
-
+        sRepel = gameObject.GetComponent<sRepel>();
 
     }
 
@@ -117,7 +132,7 @@ public class sPlayer : MonoBehaviour
             if (vLives > 0)
             {
                 tLives.text = "Lives: " + vLives;
-                sMoveandRespawn.pRespawn();
+                StartCoroutine(sMoveandRespawn.pRespawn());
 
             }
             else
@@ -125,8 +140,10 @@ public class sPlayer : MonoBehaviour
                 //gameover
                 tGameOver.text = "Game Over";
                 fGameOver = true;
-                sMoveandRespawn.pRespawn();
                 Time.timeScale = 0.1f;
+                StartCoroutine(sMoveandRespawn.pRespawn());
+
+             
 
 
 
@@ -162,6 +179,27 @@ public class sPlayer : MonoBehaviour
 
         }
 
+        if (other.gameObject.tag == vPowerupTagText[2])
+        {
+            fShotUp = true;
+            vShotUpTimer = vShotUpInterval;
+           Aura2.SetActive(true);
+
+            Destroy(other.gameObject);
+
+        }
+
+        if (other.gameObject.tag == vPowerupTagText[3])
+        {
+            vRepelUpTimer = vRepelUpInterval;
+            sRepel.vGravity = vRepelGravity;
+            Aura3.SetActive(true);
+
+            Destroy(other.gameObject);
+
+        }
+
+
 
     }
 
@@ -171,8 +209,20 @@ public class sPlayer : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
               {
 
+            float vShotUpMultiplierTmp;
+            if (fShotUp)
+            {
+                vShotUpMultiplierTmp = vShotUpMult;
+            }
+            else
+            {
+                vShotUpMultiplierTmp = 1.0f;
+            }
+
+
             vShot = Instantiate(vShotPrefab, transform.position + gFocalPoint.forward, Quaternion.identity,ShotParent);
             vShot.GetComponent<Rigidbody>().AddForce(gFocalPoint.forward * vShotForce, ForceMode.Impulse);
+            vShot.GetComponent<Rigidbody>().mass = vShotUpMultiplierTmp * vShot.GetComponent<Rigidbody>().mass;
             Destroy(vShot, 2f);
         }
 
@@ -201,6 +251,26 @@ public class sPlayer : MonoBehaviour
             transform.localScale =vOriginalSize;
 
         }
+
+        //ShotUp Timer
+
+        vShotUpTimer = vShotUpTimer - Time.deltaTime;
+        if (vShotUpTimer < 0)
+        {
+            fShotUp = false;
+            Aura2.SetActive(false);
+        }
+
+
+        //Repel Timer
+
+        vRepelUpTimer = vRepelUpTimer - Time.deltaTime;
+        if (vRepelUpTimer < 0)
+        {
+            sRepel.vGravity = 0;
+            Aura3.SetActive(false);
+        }
+
     }
 
 

@@ -159,8 +159,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Aura: {fileID: 2048555432561730528}
   EnemyBody: {fileID: 6843920546975487693}
-  vAttackInterval: 4
-  vAttackTimeRandomness: 0
+  vAttackInterval: 3
+  vAttackTimeRandomness: 0.5
   vHitDelay: 6
   Player: {fileID: 0}
   vTimer: 4
@@ -211,7 +211,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2840480614468608509}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: e00407e8f8e57d34ca315891fdc55c10, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

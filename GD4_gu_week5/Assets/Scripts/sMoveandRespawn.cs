@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System.Collections;
 public class sMoveandRespawn : MonoBehaviour
 {
     [SerializeField] Vector3 vStartPos;
@@ -31,7 +31,7 @@ public class sMoveandRespawn : MonoBehaviour
         if (transform.position.y < vOOBLow)
         {
             
-            pRespawn();
+            StartCoroutine(pRespawn());
            
 
 
@@ -41,15 +41,20 @@ public class sMoveandRespawn : MonoBehaviour
 
     }
 
-    public void pRespawn()
+    public IEnumerator pRespawn()
     {
         //restore start position
 
         GameObject explodeS = Instantiate(explode, transform.position, Quaternion.identity);
         Destroy(explodeS,1f);
-
+        sPlayer sPlayer = GetComponent<sPlayer>();
+        sPlayer.fSafe = true;
+        transform.localScale = Vector3.zero;
+        yield return new WaitForSeconds(1);
         transform.position = vStartPos;
+        transform.localScale = Vector3.one;
 
+        sPlayer.fSafe = false;
 
         //kill velocity
         transform.rotation = Quaternion.identity;
