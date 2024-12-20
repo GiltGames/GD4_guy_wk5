@@ -1,6 +1,6 @@
 using TMPro;
 using Unity.Hierarchy;
-using UnityEditor.ShaderGraph.Internal;
+
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.SceneManagement;
@@ -43,6 +43,8 @@ public class sPlayer : MonoBehaviour
     [SerializeField] TextMeshProUGUI tScore;
     [SerializeField] TextMeshProUGUI tLives;
     [SerializeField] TextMeshProUGUI tGameOver;
+    [SerializeField] TextMeshProUGUI tInstructions;
+    [SerializeField] TextMeshProUGUI tTitle;
     [SerializeField] float vTimeEnd;
     public bool fGameOver;
     public bool fGameStart;
@@ -101,6 +103,8 @@ public class sPlayer : MonoBehaviour
 
                 fGameStart = true;
                 tGameOver.text = "";
+                tTitle.enabled = false;
+                tInstructions.enabled = false;  
 
                 gCamera.rotation = Quaternion.identity;
 
@@ -262,7 +266,7 @@ public class sPlayer : MonoBehaviour
 
     private void pFire()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire1"))
               {
 
             audioS.clip = vLightning;
