@@ -2,6 +2,9 @@ using TMPro;
 using Unity.Hierarchy;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using UnityEngine.ProBuilder;
+using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class sPlayer : MonoBehaviour
 {
@@ -30,7 +33,7 @@ public class sPlayer : MonoBehaviour
     [SerializeField] float vRepelUpTimer;
     [SerializeField] float vRepelUpInterval;
     [SerializeField] sRepel sRepel;
-    [SerializeField] float vRepelGravity=-50f;
+    [SerializeField] float vRepelGravity = -50f;
 
 
     Rigidbody rb;
@@ -54,9 +57,19 @@ public class sPlayer : MonoBehaviour
     [SerializeField] GameObject Aura;
     [SerializeField] string[] vPowerupTagText;
     [SerializeField] Transform ShotParent;
-    
 
 
+    [SerializeField] Transform gCamera;
+
+    [SerializeField] sSpawner sSpawner;
+
+    [SerializeField] float vGameOverTimer;
+    [SerializeField] float vGameOverInterval=3;
+    [SerializeField] Vector3 vStartPosPlayer;
+    [SerializeField] AudioSource audioS;
+    [SerializeField] AudioClip vLightning;
+    [SerializeField] AudioClip vHit;
+    [SerializeField] AudioClip vExplode;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -69,6 +82,10 @@ public class sPlayer : MonoBehaviour
         transform.rotation = Quaternion.identity;
         vOriginalSize = transform.localScale;
         sRepel = gameObject.GetComponent<sRepel>();
+        vStartPosPlayer = transform.position;
+        audioS = GetComponent<AudioSource>(); 
+     
+
 
     }
 
@@ -85,6 +102,8 @@ public class sPlayer : MonoBehaviour
                 fGameStart = true;
                 tGameOver.text = "";
 
+                gCamera.rotation = Quaternion.identity;
+
             }
 
 
@@ -93,22 +112,34 @@ public class sPlayer : MonoBehaviour
 
         }
 
-        
+
         if (!fGameOver && fGameStart)
         {
             pInputForce();
 
             pFire();
 
-          pTimer();
+            pTimer();
 
-            
+
 
         }
 
+        else
+        {
+            vGameOverTimer = vGameOverTimer - Time.deltaTime;
+            if (vGameOverTimer < 0 && fGameOver)
+            {
+                Time.timeScale = 1;
 
+                vScore = 0;
+                vLives = 3;
+                fGameOver = false;
+                fGameStart = false;
+                SceneManager.LoadScene(0);
+            }
 
-
+        }
     }
 
 
@@ -117,17 +148,32 @@ public class sPlayer : MonoBehaviour
     {
 
         float vUp = Input.GetAxis("Vertical");
-        rb.AddForce(gFocalPoint.forward * vUp* vPlayerSpeed * Time.deltaTime,ForceMode.Impulse);
-            
-            
+        float vHor = Input.GetAxis("Horizontal");
+
+        Vector3 vInput = ((gFocalPoint.forward * vUp)+ (gFocalPoint.right * vHor)).normalized;
+
+
+        //rb.AddForce(gFocalPoint.forward * vUp* vPlayerSpeed * Time.deltaTime,ForceMode.Impulse);
+        rb.AddForce(vInput * vPlayerSpeed * Time.deltaTime, ForceMode.Impulse);
+
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        audioS.clip = vHit;
+        audioS.Play();
+
         if (collision.gameObject.tag == "Trap" && !fSafe)
 
         {
             vLives = vLives - 1;
+            Aura3.SetActive(false);
+            Aura2.SetActive(false);
+
+            audioS.clip = vExplode;
+            audioS.Play();
+
+
 
             if (vLives > 0)
             {
@@ -140,8 +186,11 @@ public class sPlayer : MonoBehaviour
                 //gameover
                 tGameOver.text = "Game Over";
                 fGameOver = true;
+                vGameOverTimer = vGameOverInterval;
                 Time.timeScale = 0.1f;
                 StartCoroutine(sMoveandRespawn.pRespawn());
+               
+                
 
              
 
@@ -159,6 +208,9 @@ public class sPlayer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+
+        sSpawner.vPowerTimer = sSpawner.vPowerupInterval;
+        
         if (other.gameObject.tag == vPowerupTagText[0])
         {
             fSafe = true;
@@ -199,6 +251,10 @@ public class sPlayer : MonoBehaviour
 
         }
 
+      
+
+
+
 
 
     }
@@ -209,21 +265,60 @@ public class sPlayer : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
               {
 
-            float vShotUpMultiplierTmp;
-            if (fShotUp)
-            {
-                vShotUpMultiplierTmp = vShotUpMult;
+            audioS.clip = vLightning;
+            audioS.Play();
+
+
+            if(!fShotUp)
+                {
+                float vShotUpMultiplierTmp;
+                if (fShotUp)
+                {
+                    vShotUpMultiplierTmp = vShotUpMult;
+                }
+                else
+                {
+                    vShotUpMultiplierTmp = 1.0f;
+                }
+
+
+                vShot = Instantiate(vShotPrefab, transform.position + gFocalPoint.forward, Quaternion.identity, ShotParent);
+                vShot.GetComponent<Rigidbody>().AddForce(gFocalPoint.forward * vShotForce, ForceMode.Impulse);
+                vShot.GetComponent<Rigidbody>().mass = vShotUpMultiplierTmp * vShot.GetComponent<Rigidbody>().mass;
+                Destroy(vShot, 2f);
+
             }
+
             else
             {
-                vShotUpMultiplierTmp = 1.0f;
+               vEnemy[] vEnemy = FindObjectsByType<vEnemy>(FindObjectsSortMode.None);
+                int vEnemyCount = vEnemy.Length;
+
+
+                
+                for (int i = 0; i < vEnemyCount; i++)
+                {
+                    float vShotUpMultiplierTmp;
+                   
+                    
+                        vShotUpMultiplierTmp = vShotUpMult;
+
+                    Vector3 vDirect = (vEnemy[i].transform.position - transform.position).normalized;
+
+
+                    vShot = Instantiate(vShotPrefab, transform.position + vDirect, Quaternion.identity, ShotParent);
+                    vShot.GetComponent<Rigidbody>().AddForce(vDirect * vShotForce, ForceMode.Impulse);
+                    vShot.GetComponent<Rigidbody>().mass = vShotUpMultiplierTmp * vShot.GetComponent<Rigidbody>().mass;
+                    Destroy(vShot, 2f);
+
+
+
+                }
+
+
+
             }
 
-
-            vShot = Instantiate(vShotPrefab, transform.position + gFocalPoint.forward, Quaternion.identity,ShotParent);
-            vShot.GetComponent<Rigidbody>().AddForce(gFocalPoint.forward * vShotForce, ForceMode.Impulse);
-            vShot.GetComponent<Rigidbody>().mass = vShotUpMultiplierTmp * vShot.GetComponent<Rigidbody>().mass;
-            Destroy(vShot, 2f);
         }
 
 
@@ -270,6 +365,8 @@ public class sPlayer : MonoBehaviour
             sRepel.vGravity = 0;
             Aura3.SetActive(false);
         }
+
+       
 
     }
 

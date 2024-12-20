@@ -4,7 +4,7 @@ public class sMoveLimits : MonoBehaviour
 {
     [SerializeField] Vector3 vStartPos;
     [SerializeField] float vOOBLow =-20;
-    [SerializeField] float vOOBUp = 0.2f;
+    [SerializeField] float vOOBUp = 3f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

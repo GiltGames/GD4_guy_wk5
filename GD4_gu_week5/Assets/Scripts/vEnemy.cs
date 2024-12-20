@@ -25,7 +25,12 @@ public class vEnemy : MonoBehaviour
     [SerializeField] TextMeshProUGUI tScore;
     [SerializeField] GameObject explode;
     [SerializeField] sPlayer sPlayer;
-    
+    [SerializeField] AudioSource audioS;
+    [SerializeField] AudioClip vHit;
+    [SerializeField] AudioClip vLightning;
+    [SerializeField] AudioClip vDamage;
+    [SerializeField] AudioClip vExplode;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -36,6 +41,7 @@ public class vEnemy : MonoBehaviour
         tScore = GameObject.Find("Score").GetComponent<TextMeshProUGUI>();
         sPlayer = Player.GetComponent<sPlayer>();
         Renderer.material.color = Color.yellow;
+        audioS= GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -104,7 +110,7 @@ public class vEnemy : MonoBehaviour
             vDirection = Player.transform.position - transform.position;
 
 
-            rb.AddForce(vDirection * vAttackForce, ForceMode.Impulse);
+            rb.AddForce(vDirection.normalized * vAttackForce, ForceMode.Impulse);
 
 
         }
@@ -116,6 +122,8 @@ public class vEnemy : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Enemy Hit: "+ collision.gameObject.tag);
+      
+        audioS.Play();  
         
         if (collision.gameObject.tag == "Shot")
         {
@@ -123,7 +131,8 @@ public class vEnemy : MonoBehaviour
             Destroy(collision.gameObject);
             vTimer = vHitDelay;
             rb.mass = vLowMass;
-
+            audioS.clip = vDamage;
+            audioS.Play();  
 
         }
 
@@ -136,6 +145,9 @@ public class vEnemy : MonoBehaviour
 
             GameObject explodeS = Instantiate(explode, transform.position, Quaternion.identity);
             Destroy(explodeS, 1f);
+            audioS.clip = vExplode;
+            audioS.Play();
+
 
             Destroy(gameObject);
 
@@ -144,7 +156,7 @@ public class vEnemy : MonoBehaviour
 
     }
 
-    private void OnCollision(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
        
 

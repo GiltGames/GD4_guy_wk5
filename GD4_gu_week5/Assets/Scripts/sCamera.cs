@@ -13,7 +13,7 @@ public class sCamera : MonoBehaviour
     [SerializeField] float vCamUpLim = 50;
     [SerializeField] float vKeyboardTurnSense =.1f;
     [SerializeField] sPlayer sPlayer;
-
+    public Vector3 vCamStartPos;
 
 
 
@@ -23,6 +23,7 @@ public class sCamera : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         transform.LookAt(Vector3.zero);
+        vCamStartPos = transform.position;
 
 
     }

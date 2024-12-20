@@ -7,6 +7,7 @@ public class sMoveandRespawn : MonoBehaviour
     [SerializeField] float vOOBUp = 0.2f;
     [SerializeField] Rigidbody rb;
     [SerializeField] GameObject explode;
+    [SerializeField] Transform gCamera;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,10 +50,15 @@ public class sMoveandRespawn : MonoBehaviour
         Destroy(explodeS,1f);
         sPlayer sPlayer = GetComponent<sPlayer>();
         sPlayer.fSafe = true;
-        transform.localScale = Vector3.zero;
-        yield return new WaitForSeconds(1);
+
+        MeshRenderer meshrender = GetComponent<MeshRenderer>();
+        meshrender.enabled = false;
         transform.position = vStartPos;
-        transform.localScale = Vector3.one;
+        gCamera.position =gCamera.GetComponent<sCamera>().vCamStartPos;
+        yield return new WaitForSeconds(1);
+
+      
+        meshrender.enabled = true;
 
         sPlayer.fSafe = false;
 

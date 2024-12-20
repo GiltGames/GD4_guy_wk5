@@ -14,12 +14,14 @@ public class sSpawner : MonoBehaviour
     [SerializeField] GameObject Centre;
     [SerializeField] GameObject Enemy;
     [SerializeField] GameObject Boss;
+    [SerializeField] GameObject Boss1;
     [SerializeField] int vNoofEnemy;
     [SerializeField] Transform enemyParent;
-    [SerializeField] float vPowerupInterval;
-    [SerializeField] float vPowerTimer;
+    public float vPowerupInterval;
+    public float vPowerTimer;
     [SerializeField] GameObject[] Powerup;
     [SerializeField] Transform PowerupParent;
+   
 
     
     
@@ -43,10 +45,11 @@ public class sSpawner : MonoBehaviour
 
             {
 
-                if (i % 3 == 2)
+                if (vLevel % 4 == 3 && i == 0)
                 {
 
-                    Instantiate(Boss, pSpawnLocation(), Quaternion.identity, enemyParent);
+                   Boss1 = Instantiate(Boss, pSpawnLocation(), Quaternion.identity, enemyParent);
+                    Boss1.transform.Translate(0,1.3f,0);    
                 }
 
                 else
@@ -63,12 +66,28 @@ public class sSpawner : MonoBehaviour
         vPowerTimer = vPowerTimer -Time.deltaTime;
 
         if (vPowerTimer <0)
-        { 
-            vPowerTimer = vPowerupInterval;
+        {
+            vPowerTimer = 100;
             int i = Random.Range(0, Powerup.Length);
             Instantiate(Powerup[i], pSpawnLocation(), Quaternion.identity, PowerupParent);
         }
 
+
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+           Boss1 = Instantiate(Boss, pSpawnLocation(), Quaternion.identity, enemyParent);
+            Boss1.transform.Translate(0, 1.3f, 0);
+
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+             Instantiate(Powerup[2], pSpawnLocation(), Quaternion.identity, PowerupParent);
+           
+
+        }
 
 
     }
@@ -122,7 +141,7 @@ public class sSpawner : MonoBehaviour
 
         }
 
-        return new Vector3(x, 0.1f, z);
+        return new Vector3(x, .1f, z);
     }
 
 }
