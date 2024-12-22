@@ -6,7 +6,10 @@ public class PlayerControllerX : MonoBehaviour
 {
     private Rigidbody playerRb;
     private float speed = 500;
+    [SerializeField] float speedBoost = 5;
     private GameObject focalPoint;
+    [SerializeField] GameObject gSmoke;
+    [SerializeField] GameObject gNewSmoke;
 
     public bool hasPowerup;
     public GameObject powerupIndicator;
@@ -19,6 +22,7 @@ public class PlayerControllerX : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody>();
         focalPoint = GameObject.Find("Focal Point");
+     
     }
 
     void Update()
@@ -30,6 +34,17 @@ public class PlayerControllerX : MonoBehaviour
         // Set powerup indicator position to beneath player
         powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
 
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+           
+        
+            playerRb.AddForce(focalPoint.transform.forward * speedBoost * speed * Time.deltaTime);
+           
+           gNewSmoke = Instantiate(gSmoke, transform.position + new Vector3(0, .02f, 0), Quaternion.identity);
+            Destroy(gNewSmoke,1);
+
+        }
+
     }
 
     // If Player collides with powerup, activate powerup
@@ -40,6 +55,8 @@ public class PlayerControllerX : MonoBehaviour
             Destroy(other.gameObject);
             hasPowerup = true;
             powerupIndicator.SetActive(true);
+            StartCoroutine(PowerupCooldown());
+
         }
     }
 
@@ -57,7 +74,7 @@ public class PlayerControllerX : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             Rigidbody enemyRigidbody = other.gameObject.GetComponent<Rigidbody>();
-            Vector3 awayFromPlayer =  transform.position - other.gameObject.transform.position; 
+            Vector3 awayFromPlayer =  other.transform.position - gameObject.transform.position; 
            
             if (hasPowerup) // if have powerup hit enemy with powerup force
             {

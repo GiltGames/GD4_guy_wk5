@@ -12,6 +12,9 @@ TagManager:
   - MassUp
   - ShotUp
   - RepelUp
+  - Powerup
+  - PlayerGoal
+  - EnemyGoal
   layers:
   - Default
   - TransparentFX
